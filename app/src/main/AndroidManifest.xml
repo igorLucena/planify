@@ -2,7 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.igorlucena.planify">
 
-    <uses-permission android:name="android.permission.CAMERA"> </uses-permission>
     <uses-permission android:name="android.permission.INTERNET"> </uses-permission>
 
     <application
@@ -19,7 +18,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".EspecificationActivity"></activity>
+        <activity android:name=".SpecificationActivity"></activity>
     </application>
 
 </manifest>
