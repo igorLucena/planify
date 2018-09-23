@@ -1,36 +1,77 @@
 package com.igorlucena.planify
 
+import android.annotation.TargetApi
 import android.graphics.Bitmap
+import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import com.igorlucena.planify.R.string.*
+import android.support.annotation.RequiresApi
+import android.text.Html
+import android.view.View
 import kotlinx.android.synthetic.main.activity_especification.*
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
+import org.json.JSONObject
+import java.net.URL
 
 class SpecificationActivity : AppCompatActivity() {
 
+    var API_URL = "https://es.wikipedia.org/w/api.php?action=query&format=json&prop=revisions&rvprop=content&titles="
     var specificationsHtml = ""
     var htmlText = ""
     var titlePlane = ""
 
+    @TargetApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_especification)
 
+        indeterminateBar.visibility = View.VISIBLE
+        layout_specification.visibility = View.GONE
+
         val extra = intent.extras
-        htmlText = (extra!!.get("html") as CharSequence).toString()
-        titlePlane = (extra!!.get("title_plane") as CharSequence).toString()
         image_plane.setImageBitmap(extra!!.get("data") as Bitmap)
+
+        titlePlane = "Boeing 777"
 
         title_plane.text = titlePlane
 
-        catchSpecificationHtml()
-        setWingspanValue()
-        setCruisingSpeed()
-        setMaxSpeed()
-        setLength()
-        setSpectrum()
-        setDescription()
-        setFirstFlight()
+        catchWikipedia("Boeing%20777")
+    }
+
+    private fun catchVision() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    @RequiresApi(Build.VERSION_CODES.N)
+    private fun catchWikipedia(airplaneBrand: String) {
+        doAsync {
+            API_URL += airplaneBrand
+            val response = URL(API_URL).readText()
+
+            val result = JSONObject(response)
+                    .getJSONObject("query")
+                    .getJSONObject("pages")
+                    .getJSONObject("145100")["revisions"]
+                    .toString()
+
+            val htmlCode = Html.fromHtml(result.subSequence(result.indexOf('*')+4,
+                    result.lastIndex-2).toString(), Html.FROM_HTML_OPTION_USE_CSS_COLORS)
+
+            uiThread {
+                indeterminateBar.visibility = View.GONE
+                layout_specification.visibility = View.VISIBLE
+                htmlText = htmlCode.toString()
+                setSpecificationsHtml()
+                setWingspanValue()
+                setCruisingSpeed()
+                setMaxSpeed()
+                setLength()
+                setSpectrum()
+                setDescription()
+                setFirstFlight()
+            }
+        }
     }
 
     private fun setFirstFlight() {
@@ -95,7 +136,7 @@ class SpecificationActivity : AppCompatActivity() {
     }
 
     private fun setLength() {
-        val lengthName = resources.getString(length)
+        val lengthName = resources.getString(R.string.length)
         var lengthValue = specificationsHtml.subSequence(
                 specificationsHtml.findAnyOf(listOf(lengthName))!!.first,
                 specificationsHtml.lastIndex)
@@ -141,8 +182,8 @@ class SpecificationActivity : AppCompatActivity() {
         cruising_speed_txt.text = ": $cruisingSpeedValue"
     }
 
-    private fun catchSpecificationHtml() {
-        val specificationName = resources.getString(specifications)
+    private fun setSpecificationsHtml() {
+        val specificationName = resources.getString(R.string.specifications)
 
         specificationsHtml = htmlText.subSequence(
                 htmlText.findAnyOf(listOf(specificationName))!!.first,
@@ -156,7 +197,7 @@ class SpecificationActivity : AppCompatActivity() {
     }
 
     private fun setWingspanValue() {
-        val wingspanName = resources.getString(wingspan)
+        val wingspanName = resources.getString(R.string.wingspan)
         var wingspanValue = specificationsHtml.subSequence(
                 specificationsHtml.findAnyOf(listOf(wingspanName))!!.first,
                 specificationsHtml.lastIndex)
