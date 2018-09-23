@@ -73,6 +73,8 @@ class MainActivity : AppCompatActivity() {
             API_URL += airplaneBrand
             val response = URL(API_URL).readText()
 
+
+
             val result = JSONObject(response)
                     .getJSONObject("query")
                     .getJSONObject("pages")
