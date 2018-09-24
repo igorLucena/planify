@@ -20,10 +20,7 @@ import java.net.URL
 
 class MainActivity : AppCompatActivity() {
 
-    var API_URL = "https://es.wikipedia.org/w/api.php?action=query&format=json&prop=revisions&rvprop=content&titles="
     val REQUEST_IMAGE_CAPTURE = 1
-    val HTML = "html"
-    val TITLE_PLANE = "title_plane"
     var mModelPlane = ""
     var specificationIntent = Intent()
 
@@ -57,38 +54,11 @@ class MainActivity : AppCompatActivity() {
             mModelPlane = "Boeing 777"
 
             specificationIntent.putExtras(extras)
-            specificationIntent.putExtra(TITLE_PLANE, mModelPlane)
+            //specificationIntent.putExtra(TITLE_PLANE, mModelPlane)
             // Put the brand of the plane provided from VISION API Google
-            catchWikipedia("Boeing%20777")
+            //catchWikipedia("Boeing%20777")
+            startActivity(specificationIntent)
         }
     }
 
-    private fun catchVision() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    @RequiresApi(Build.VERSION_CODES.N)
-    private fun catchWikipedia(airplaneBrand: String) {
-        doAsync {
-            API_URL += airplaneBrand
-            val response = URL(API_URL).readText()
-
-
-
-            val result = JSONObject(response)
-                    .getJSONObject("query")
-                    .getJSONObject("pages")
-                    .getJSONObject("145100")["revisions"]
-                    .toString()
-
-            val htmlCode = Html.fromHtml(result.subSequence(result.indexOf('*')+4,
-                    result.lastIndex-2).toString(), FROM_HTML_OPTION_USE_CSS_COLORS)
-
-            uiThread {
-                specificationIntent.putExtra(HTML, htmlCode)
-
-                startActivity(specificationIntent)
-            }
-        }
-    }
 }
