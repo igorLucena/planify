@@ -8,7 +8,7 @@ import android.os.Bundle
 import android.support.annotation.RequiresApi
 import android.text.Html
 import android.view.View
-import kotlinx.android.synthetic.main.activity_especification.*
+import kotlinx.android.synthetic.main.activity_specification.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import org.json.JSONObject
@@ -24,7 +24,7 @@ class SpecificationActivity : AppCompatActivity() {
     @TargetApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_especification)
+        setContentView(R.layout.activity_specification)
 
         indeterminateBar.visibility = View.VISIBLE
         layout_specification.visibility = View.GONE
