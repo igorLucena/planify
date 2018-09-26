@@ -204,19 +204,34 @@ class SpecificationActivity : AppCompatActivity() {
     }
 
     private fun setMaxSpeed() {
-        val maxSpeedName = "Velocidad de crucero máxima"
-        var maxSpeedValue = mSpecificationsHtml.subSequence(
-                mSpecificationsHtml.findAnyOf(listOf(maxSpeedName))!!.first,
-                mSpecificationsHtml.lastIndex)
-        maxSpeedValue = maxSpeedValue.subSequence(
-                maxSpeedValue.indexOf('(') + 1,
-                maxSpeedValue.indexOf(')'))
-                .toString()
+        val maxSpeedName1 = "Velocidad de crucero máxima"
+        val maxSpeedName2 = "Máxima velocidad de crucero"
+        var maxSpeedValue = ""
 
-        maxSpeedValue = maxSpeedValue.replace('\\', ' ')
+        if (mSpecificationsHtml.findAnyOf(listOf(maxSpeedName1)) == null) {
+            maxSpeedValue = mSpecificationsHtml.subSequence(
+                    mSpecificationsHtml.findAnyOf(listOf(maxSpeedName2))!!.first,
+                    mSpecificationsHtml.lastIndex)
+                    .toString()
+        } else {
+            maxSpeedValue = mSpecificationsHtml.subSequence(
+                    mSpecificationsHtml.findAnyOf(listOf(maxSpeedName1))!!.first,
+                    mSpecificationsHtml.lastIndex)
+                    .toString()
+        }
 
+        if (maxSpeedValue.length == 0) {
+            max_speed_txt.text = ": -"
+        } else {
+            maxSpeedValue = maxSpeedValue.subSequence(
+                    maxSpeedValue.indexOf(',') - 1,
+                    maxSpeedValue.indexOf(',') + 3)
+                    .toString()
 
-        max_speed_txt.text = ": $maxSpeedValue"
+            val maxSpeedValueExp = round(maxSpeedValue.toString().replace(',','.').toFloat() * 1235.0)
+
+            max_speed_txt.text = ": $maxSpeedValueExp km/h"
+        }
     }
 
     private fun setCruisingSpeed() {
