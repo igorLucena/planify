@@ -8,5 +8,10 @@
     <string name="wingspan">Envergadura</string>
     <string name="cruising_speed">Velocidad de crucero</string>
     <string name="absolute_ceiling">Techo absoluto</string>
-    <style name="automatic">Autonomía</style>
+    <string name="automatic">Autonomía</string>
+    <string name="try_again">Intentar de nuevo</string>
+    <string name="no_connection">Sin conexión</string>
+    <string name="no_exists_airplane">La foto no contiene un avión</string>
+    <string name="no_specification">No se pudo encontrar la especificación de este avión</string>
+
 </resources>
