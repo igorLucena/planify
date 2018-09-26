@@ -15,6 +15,7 @@ import com.google.api.services.vision.v1.VisionRequestInitializer
 import com.google.api.services.vision.v1.model.*
 import kotlinx.android.synthetic.main.activity_specification.*
 import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.uiThread
 import org.json.JSONObject
 import java.lang.Math.round
@@ -49,7 +50,7 @@ class SpecificationActivity : AppCompatActivity() {
                 .setVisionRequestInitializer(VisionRequestInitializer(API_VISION_KEY))
                 .build()
 
-        val inputStream = resources.openRawResource(R.raw.air4)
+        val inputStream = resources.openRawResource(R.raw.air1)
         val photoData = org.apache.commons.io.IOUtils.toByteArray(inputStream)
         inputStream.close()
 
@@ -92,9 +93,19 @@ class SpecificationActivity : AppCompatActivity() {
             }
 
             uiThread {
-                title_plane.text = mTitlePlane
+                if (!airplane) {
+                    val message = resources.getString(R.string.no_exists_airplane)
+                    startActivity(intentFor<ErrorActivity>("error" to message))
+                    finish()
+                } else if (mTitlePlane.length == 0) {
+                    val message = resources.getString(R.string.no_specification)
+                    startActivity(intentFor<ErrorActivity>("error" to message))
+                    finish()
+                } else {
+                    title_plane.text = mTitlePlane
 
-                catchWikipedia(mTitlePlane.replace(" ", "%20"))
+                    catchWikipedia(mTitlePlane.replace(" ", "%20"))
+                }
             }
         }
     }

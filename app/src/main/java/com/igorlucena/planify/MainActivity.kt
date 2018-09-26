@@ -1,7 +1,10 @@
 package com.igorlucena.planify
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
+import android.net.NetworkInfo
 import android.os.Build
 import android.os.Bundle
 import android.os.ProxyFileDescriptorCallback
@@ -14,6 +17,7 @@ import android.text.SpannableStringBuilder
 import android.util.Log
 import android.widget.Button
 import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.uiThread
 import org.json.JSONObject
 import java.net.URL
@@ -33,8 +37,19 @@ class MainActivity : AppCompatActivity() {
         specificationIntent = Intent(this, SpecificationActivity::class.java)
 
         photoButton.setOnClickListener {
-            dispatchTakePictureIntent()
+            if (isNetworkConnected()) {
+                dispatchTakePictureIntent()
+            } else {
+                val message = resources.getString(R.string.no_connection)
+                startActivity(intentFor<ErrorActivity>("error" to message))
+            }
         }
+    }
+
+    private fun isNetworkConnected(): Boolean {
+        val cm = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+
+        return cm.activeNetworkInfo != null
     }
 
     private fun dispatchTakePictureIntent() {
