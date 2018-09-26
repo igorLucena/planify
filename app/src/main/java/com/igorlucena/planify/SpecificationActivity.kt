@@ -8,39 +8,95 @@ import android.os.Bundle
 import android.support.annotation.RequiresApi
 import android.text.Html
 import android.view.View
+import com.google.api.client.extensions.android.json.AndroidJsonFactory
+import com.google.api.client.http.javanet.NetHttpTransport
+import com.google.api.services.vision.v1.Vision
+import com.google.api.services.vision.v1.VisionRequestInitializer
+import com.google.api.services.vision.v1.model.*
 import kotlinx.android.synthetic.main.activity_specification.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import org.json.JSONObject
+import java.lang.Math.round
 import java.net.URL
+import java.util.*
 
 class SpecificationActivity : AppCompatActivity() {
 
     var API_URL = "https://es.wikipedia.org/w/api.php?action=query&format=json&prop=revisions&rvprop=content&titles="
-    var specificationsHtml = ""
-    var htmlText = ""
-    var titlePlane = ""
+    val API_VISION_KEY = "AIzaSyDK0sjfsIqaOEQyNygIjSgr3aIh9hVlpX4"
+    var mSpecificationsHtml = ""
+    var mHtmlText = ""
+    var mTitlePlane = ""
 
-    @TargetApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_specification)
 
         indeterminateBar.visibility = View.VISIBLE
+
         layout_specification.visibility = View.GONE
 
         val extra = intent.extras
         image_plane.setImageBitmap(extra!!.get("data") as Bitmap)
 
-        titlePlane = "Boeing 777"
-
-        title_plane.text = titlePlane
-
-        catchWikipedia("Boeing%20777")
+        catchVision()
     }
 
+    @TargetApi(Build.VERSION_CODES.N)
     private fun catchVision() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val vision = Vision.Builder(NetHttpTransport(), AndroidJsonFactory(), null)
+                .setVisionRequestInitializer(VisionRequestInitializer(API_VISION_KEY))
+                .build()
+
+        val inputStream = resources.openRawResource(R.raw.air4)
+        val photoData = org.apache.commons.io.IOUtils.toByteArray(inputStream)
+        inputStream.close()
+
+        val inputImage = Image()
+        inputImage.encodeContent(photoData)
+
+        val desiredFeature = Feature()
+        desiredFeature.setType("LABEL_DETECTION")
+
+        val request = AnnotateImageRequest()
+        request.setImage(inputImage)
+        request.setFeatures(Arrays.asList(desiredFeature))
+
+        val batchRequest = BatchAnnotateImagesRequest()
+        batchRequest.setRequests(Arrays.asList(request))
+
+        doAsync {
+            val batchResponse = vision.images().annotate(batchRequest).execute()
+
+            val descriptions = batchResponse.responses.get(0).labelAnnotations
+
+            var airplane = false
+            for (i in (0..(descriptions.size - 1))) {
+                var description = descriptions.get(i).description
+                if (description.equals("airplane")) {
+                    airplane = true
+                }
+
+                if (airplane && description.startsWith("boeing ") ||
+                        description.startsWith("airbus "))
+                {
+                    val descriptionList = description.split(Regex.fromLiteral(" "))
+                    description = ""
+                    for (str in descriptionList) {
+                        description += str.capitalize()
+                        description += ' '
+                    }
+                    mTitlePlane = description.trim()
+                }
+            }
+
+            uiThread {
+                title_plane.text = mTitlePlane
+
+                catchWikipedia(mTitlePlane.replace(" ", "%20"))
+            }
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
@@ -49,20 +105,24 @@ class SpecificationActivity : AppCompatActivity() {
             API_URL += airplaneBrand
             val response = URL(API_URL).readText()
 
+            val number = JSONObject(response)
+                    .getJSONObject("query")
+                    .getJSONObject("pages")
+                    .keys()
+                    .next()
+
             val result = JSONObject(response)
                     .getJSONObject("query")
                     .getJSONObject("pages")
-                    .getJSONObject("145100")["revisions"]
+                    .getJSONObject(number)["revisions"]
                     .toString()
 
             val htmlCode = Html.fromHtml(result.subSequence(result.indexOf('*')+4,
                     result.lastIndex-2).toString(), Html.FROM_HTML_OPTION_USE_CSS_COLORS)
+            mHtmlText = htmlCode.toString()
+            setSpecificationsHtml()
 
             uiThread {
-                indeterminateBar.visibility = View.GONE
-                layout_specification.visibility = View.VISIBLE
-                htmlText = htmlCode.toString()
-                setSpecificationsHtml()
                 setWingspanValue()
                 setCruisingSpeed()
                 setMaxSpeed()
@@ -70,22 +130,17 @@ class SpecificationActivity : AppCompatActivity() {
                 setSpectrum()
                 setDescription()
                 setFirstFlight()
+                indeterminateBar.visibility = View.GONE
+                layout_specification.visibility = View.VISIBLE
             }
         }
     }
 
     private fun setFirstFlight() {
         val firstFlightName = "primer vuelo"
-        var firstFlightValue = htmlText.subSequence(
-                htmlText.findAnyOf(listOf(firstFlightName))!!.first,
-                htmlText.lastIndex)
-                .toString()
-
-        val i1 = firstFlightValue.findAnyOf(listOf("[["))!!.first+2
-        val i2 = firstFlightValue.findAnyOf(listOf("\n"))!!.first
-        firstFlightValue = firstFlightValue.subSequence(
-                firstFlightValue.findAnyOf(listOf("[["))!!.first+2,
-                firstFlightValue.findAnyOf(listOf("\n"))!!.first)
+        var firstFlightValue = mHtmlText.subSequence(
+                mHtmlText.findAnyOf(listOf(firstFlightName))!!.first,
+                mHtmlText.lastIndex)
                 .toString()
 
         firstFlightValue = firstFlightValue.replace(']', ' ')
@@ -103,9 +158,9 @@ class SpecificationActivity : AppCompatActivity() {
 
     private fun setDescription() {
         val descriptionName = "nEl"
-        var descriptionValue = htmlText.subSequence(
-                htmlText.findAnyOf(listOf(descriptionName))!!.first+1,
-                htmlText.lastIndex)
+        var descriptionValue = mHtmlText.subSequence(
+                mHtmlText.findAnyOf(listOf(descriptionName))!!.first+1,
+                mHtmlText.lastIndex)
                 .toString()
 
         descriptionValue = descriptionValue.subSequence(
@@ -121,9 +176,9 @@ class SpecificationActivity : AppCompatActivity() {
 
     private fun setSpectrum() {
         val spectrumName = "Alcance"
-        var spectrumValue = specificationsHtml.subSequence(
-                specificationsHtml.findAnyOf(listOf(spectrumName))!!.first,
-                specificationsHtml.lastIndex)
+        var spectrumValue = mSpecificationsHtml.subSequence(
+                mSpecificationsHtml.findAnyOf(listOf(spectrumName))!!.first,
+                mSpecificationsHtml.lastIndex)
         spectrumValue = spectrumValue.subSequence(
                 spectrumValue.findAnyOf(listOf("n|"))!!.first + 3,
                 spectrumValue.findAnyOf(listOf("||"))!!.first)
@@ -137,9 +192,9 @@ class SpecificationActivity : AppCompatActivity() {
 
     private fun setLength() {
         val lengthName = resources.getString(R.string.length)
-        var lengthValue = specificationsHtml.subSequence(
-                specificationsHtml.findAnyOf(listOf(lengthName))!!.first,
-                specificationsHtml.lastIndex)
+        var lengthValue = mSpecificationsHtml.subSequence(
+                mSpecificationsHtml.findAnyOf(listOf(lengthName))!!.first,
+                mSpecificationsHtml.lastIndex)
         lengthValue = lengthValue.subSequence(
                 lengthValue.indexOf(',') - 2,
                 lengthValue.indexOf(',') + 2)
@@ -150,9 +205,9 @@ class SpecificationActivity : AppCompatActivity() {
 
     private fun setMaxSpeed() {
         val maxSpeedName = "Velocidad de crucero máxima"
-        var maxSpeedValue = specificationsHtml.subSequence(
-                specificationsHtml.findAnyOf(listOf(maxSpeedName))!!.first,
-                specificationsHtml.lastIndex)
+        var maxSpeedValue = mSpecificationsHtml.subSequence(
+                mSpecificationsHtml.findAnyOf(listOf(maxSpeedName))!!.first,
+                mSpecificationsHtml.lastIndex)
         maxSpeedValue = maxSpeedValue.subSequence(
                 maxSpeedValue.indexOf('(') + 1,
                 maxSpeedValue.indexOf(')'))
@@ -165,42 +220,39 @@ class SpecificationActivity : AppCompatActivity() {
     }
 
     private fun setCruisingSpeed() {
-        val cruisingSpeedName = "Velocidad de crucero normal"
-        var cruisingSpeedValue = specificationsHtml.subSequence(
-                specificationsHtml.findAnyOf(listOf(cruisingSpeedName))!!.first,
-                specificationsHtml.lastIndex)
+        val cruisingSpeedName = "Velocidad de crucero"
+        var cruisingSpeedValue = mSpecificationsHtml.subSequence(
+                mSpecificationsHtml.findAnyOf(listOf(cruisingSpeedName))!!.first,
+                mSpecificationsHtml.lastIndex)
         cruisingSpeedValue = cruisingSpeedValue.subSequence(
-                cruisingSpeedValue.indexOf('(') + 1,
-                cruisingSpeedValue.indexOf(')'))
-                .toString()
+                cruisingSpeedValue.indexOf(',') - 1,
+                cruisingSpeedValue.indexOf(',') + 3)
 
-        cruisingSpeedValue = cruisingSpeedValue.replace('[', ' ')
-        cruisingSpeedValue = cruisingSpeedValue.replace(']', ' ')
-        cruisingSpeedValue = cruisingSpeedValue.replace('\\', ' ')
+        val cruisingSpeedValueExp = round(cruisingSpeedValue.toString().replace(',','.').toFloat() * 1235.0)
 
 
-        cruising_speed_txt.text = ": $cruisingSpeedValue"
+        cruising_speed_txt.text = ": $cruisingSpeedValueExp km/h"
     }
 
     private fun setSpecificationsHtml() {
         val specificationName = resources.getString(R.string.specifications)
 
-        specificationsHtml = htmlText.subSequence(
-                htmlText.findAnyOf(listOf(specificationName))!!.first,
-                htmlText.lastIndex)
+        mSpecificationsHtml = mHtmlText.subSequence(
+                mHtmlText.findAnyOf(listOf(specificationName))!!.first,
+                mHtmlText.lastIndex)
                 .toString()
 
-        specificationsHtml = specificationsHtml.subSequence(
+        mSpecificationsHtml = mSpecificationsHtml.subSequence(
                 0,
-                specificationsHtml.findAnyOf(listOf("Fuentes"))!!.first - 1)
+                mSpecificationsHtml.findAnyOf(listOf("Referencias"))!!.first - 1)
                 .toString()
     }
 
     private fun setWingspanValue() {
         val wingspanName = resources.getString(R.string.wingspan)
-        var wingspanValue = specificationsHtml.subSequence(
-                specificationsHtml.findAnyOf(listOf(wingspanName))!!.first,
-                specificationsHtml.lastIndex)
+        var wingspanValue = mSpecificationsHtml.subSequence(
+                mSpecificationsHtml.findAnyOf(listOf(wingspanName))!!.first,
+                mSpecificationsHtml.lastIndex)
         wingspanValue = wingspanValue.subSequence(
                 wingspanValue.indexOf('m') - 5,
                 wingspanValue.indexOf('m') + 1)
