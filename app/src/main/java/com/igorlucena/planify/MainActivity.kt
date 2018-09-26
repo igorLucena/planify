@@ -21,7 +21,6 @@ import java.net.URL
 class MainActivity : AppCompatActivity() {
 
     val REQUEST_IMAGE_CAPTURE = 1
-    var mModelPlane = ""
     var specificationIntent = Intent()
 
 
@@ -50,13 +49,7 @@ class MainActivity : AppCompatActivity() {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
             val extras = data!!.extras
 
-            //catchVision()
-            mModelPlane = "Boeing 777"
-
             specificationIntent.putExtras(extras)
-            //specificationIntent.putExtra(TITLE_PLANE, mModelPlane)
-            // Put the brand of the plane provided from VISION API Google
-            //catchWikipedia("Boeing%20777")
             startActivity(specificationIntent)
         }
     }
