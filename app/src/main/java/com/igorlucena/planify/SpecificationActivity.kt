@@ -23,6 +23,7 @@ import org.jetbrains.anko.uiThread
 import org.json.JSONObject
 import java.lang.Math.round
 import java.net.URL
+import java.time.ZoneId
 import java.util.*
 
 class SpecificationActivity : AppCompatActivity() {
@@ -60,7 +61,7 @@ class SpecificationActivity : AppCompatActivity() {
                 .setVisionRequestInitializer(VisionRequestInitializer(API_VISION_KEY))
                 .build()
 
-        val inputStream = resources.openRawResource(R.raw.air1)
+        val inputStream = resources.openRawResource(R.raw.air4)
         val photoData = org.apache.commons.io.IOUtils.toByteArray(inputStream)
         inputStream.close()
 
@@ -81,7 +82,16 @@ class SpecificationActivity : AppCompatActivity() {
             val batchResponse = vision.images().annotate(batchRequest).execute()
             mRestrictions++
             val editor = mSharedPreferences!!.edit()
-            editor.putInt("9", mRestrictions)
+            val date = Date()
+            val month = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
+                localDate.monthValue
+            } else {
+                val cal = Calendar.getInstance()
+                cal.time = date
+                cal.get(Calendar.MONTH)
+            }
+            editor.putInt(month.toString(), mRestrictions)
             editor.commit()
 
             val descriptions = batchResponse.responses.get(0).labelAnnotations

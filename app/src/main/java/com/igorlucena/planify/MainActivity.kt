@@ -19,6 +19,8 @@ import android.widget.Button
 import org.jetbrains.anko.*
 import org.json.JSONObject
 import java.net.URL
+import java.time.ZoneId
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -27,6 +29,7 @@ class MainActivity : AppCompatActivity() {
     val RESTRICTIONS_VISION_API = "restrictions"
 
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -38,8 +41,17 @@ class MainActivity : AppCompatActivity() {
         val sharedPreferences = getSharedPreferences(RESTRICTIONS_VISION_API, Context.MODE_PRIVATE)
 
         photoButton.setOnClickListener {
-            val restrictions = sharedPreferences.getInt("9", 0)
-            if (restrictions < 10) {
+            val date = Date()
+            val month = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
+                localDate.monthValue
+            } else {
+                val cal = Calendar.getInstance()
+                cal.time = date
+                cal.get(Calendar.MONTH)
+            }
+            val restrictions = sharedPreferences.getInt(month.toString(), 0)
+            if (restrictions < 20) {
                 if (isNetworkConnected()) {
                     dispatchTakePictureIntent()
                 } else {
