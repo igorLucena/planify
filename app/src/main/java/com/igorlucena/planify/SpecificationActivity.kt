@@ -1,6 +1,8 @@
 package com.igorlucena.planify
 
 import android.annotation.TargetApi
+import android.content.Context
+import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.os.Build
 import android.support.v7.app.AppCompatActivity
@@ -16,23 +18,32 @@ import com.google.api.services.vision.v1.model.*
 import kotlinx.android.synthetic.main.activity_specification.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.intentFor
+import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
 import org.json.JSONObject
 import java.lang.Math.round
 import java.net.URL
+import java.time.ZoneId
 import java.util.*
 
 class SpecificationActivity : AppCompatActivity() {
 
     var API_URL = "https://es.wikipedia.org/w/api.php?action=query&format=json&prop=revisions&rvprop=content&titles="
     val API_VISION_KEY = "AIzaSyDK0sjfsIqaOEQyNygIjSgr3aIh9hVlpX4"
+    val RESTRICTIONS_VISION_API = "restrictions"
     var mSpecificationsHtml = ""
     var mHtmlText = ""
     var mTitlePlane = ""
+    var mRestrictions = 0
+    var mSharedPreferences: SharedPreferences? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_specification)
+
+        mSharedPreferences = getSharedPreferences(RESTRICTIONS_VISION_API,
+                Context.MODE_PRIVATE)
+        mRestrictions = mSharedPreferences!!.getInt("9", 0)
 
         indeterminateBar.visibility = View.VISIBLE
 
@@ -50,7 +61,7 @@ class SpecificationActivity : AppCompatActivity() {
                 .setVisionRequestInitializer(VisionRequestInitializer(API_VISION_KEY))
                 .build()
 
-        val inputStream = resources.openRawResource(R.raw.air1)
+        val inputStream = resources.openRawResource(R.raw.air4)
         val photoData = org.apache.commons.io.IOUtils.toByteArray(inputStream)
         inputStream.close()
 
@@ -69,6 +80,19 @@ class SpecificationActivity : AppCompatActivity() {
 
         doAsync {
             val batchResponse = vision.images().annotate(batchRequest).execute()
+            mRestrictions++
+            val editor = mSharedPreferences!!.edit()
+            val date = Date()
+            val month = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
+                localDate.monthValue
+            } else {
+                val cal = Calendar.getInstance()
+                cal.time = date
+                cal.get(Calendar.MONTH)
+            }
+            editor.putInt(month.toString(), mRestrictions)
+            editor.commit()
 
             val descriptions = batchResponse.responses.get(0).labelAnnotations
 
@@ -143,6 +167,7 @@ class SpecificationActivity : AppCompatActivity() {
                 setFirstFlight()
                 indeterminateBar.visibility = View.GONE
                 layout_specification.visibility = View.VISIBLE
+                toast("Ha utilizado $mRestrictions de 10 solicitudes en la aplicación.")
             }
         }
     }
