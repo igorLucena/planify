@@ -16,9 +16,7 @@ import android.text.Html.FROM_HTML_OPTION_USE_CSS_COLORS
 import android.text.SpannableStringBuilder
 import android.util.Log
 import android.widget.Button
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.intentFor
-import org.jetbrains.anko.uiThread
+import org.jetbrains.anko.*
 import org.json.JSONObject
 import java.net.URL
 
@@ -26,6 +24,7 @@ class MainActivity : AppCompatActivity() {
 
     val REQUEST_IMAGE_CAPTURE = 1
     var specificationIntent = Intent()
+    val RESTRICTIONS_VISION_API = "restrictions"
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,12 +35,19 @@ class MainActivity : AppCompatActivity() {
 
         specificationIntent = Intent(this, SpecificationActivity::class.java)
 
+        val sharedPreferences = getSharedPreferences(RESTRICTIONS_VISION_API, Context.MODE_PRIVATE)
+
         photoButton.setOnClickListener {
-            if (isNetworkConnected()) {
-                dispatchTakePictureIntent()
+            val restrictions = sharedPreferences.getInt("9", 0)
+            if (restrictions < 10) {
+                if (isNetworkConnected()) {
+                    dispatchTakePictureIntent()
+                } else {
+                    val message = resources.getString(R.string.no_connection)
+                    startActivity(intentFor<ErrorActivity>("error" to message))
+                }
             } else {
-                val message = resources.getString(R.string.no_connection)
-                startActivity(intentFor<ErrorActivity>("error" to message))
+                longToast("Usted ha utilizado el máximo de 10 solicitudes por mes. Espera el próximo mes para continuar utilizando la aplicación.")
             }
         }
     }
