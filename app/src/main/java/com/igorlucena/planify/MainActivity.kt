@@ -4,21 +4,13 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
-import android.net.NetworkInfo
 import android.os.Build
 import android.os.Bundle
-import android.os.ProxyFileDescriptorCallback
 import android.provider.MediaStore
 import android.support.annotation.RequiresApi
 import android.support.v7.app.AppCompatActivity
-import android.text.Html
-import android.text.Html.FROM_HTML_OPTION_USE_CSS_COLORS
-import android.text.SpannableStringBuilder
-import android.util.Log
 import android.widget.Button
 import org.jetbrains.anko.*
-import org.json.JSONObject
-import java.net.URL
 import java.time.ZoneId
 import java.util.*
 

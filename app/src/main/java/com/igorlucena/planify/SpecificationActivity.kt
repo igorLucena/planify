@@ -15,6 +15,7 @@ import com.google.api.client.http.javanet.NetHttpTransport
 import com.google.api.services.vision.v1.Vision
 import com.google.api.services.vision.v1.VisionRequestInitializer
 import com.google.api.services.vision.v1.model.*
+import com.google.firebase.database.FirebaseDatabase
 import kotlinx.android.synthetic.main.activity_specification.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.intentFor
@@ -35,7 +36,8 @@ class SpecificationActivity : AppCompatActivity() {
     var mHtmlText = ""
     var mTitlePlane = ""
     var mRestrictions = 0
-    var mSharedPreferences: SharedPreferences? = null
+    lateinit var mSharedPreferences: SharedPreferences
+    val mDatabase = FirebaseDatabase.getInstance().getReference("https://model-fastness-214816.firebaseio.com/");
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,12 +70,15 @@ class SpecificationActivity : AppCompatActivity() {
         val inputImage = Image()
         inputImage.encodeContent(photoData)
 
-        val desiredFeature = Feature()
-        desiredFeature.setType("LABEL_DETECTION")
+        val desiredFeature1 = Feature()
+        desiredFeature1.setType("LABEL_DETECTION")
+        val desiredFeature2 = Feature()
+        desiredFeature2.setType("WEB_DETECTION")
+
 
         val request = AnnotateImageRequest()
         request.setImage(inputImage)
-        request.setFeatures(Arrays.asList(desiredFeature))
+        request.setFeatures(Arrays.asList(desiredFeature1, desiredFeature2))
 
         val batchRequest = BatchAnnotateImagesRequest()
         batchRequest.setRequests(Arrays.asList(request))
@@ -128,7 +133,9 @@ class SpecificationActivity : AppCompatActivity() {
                 } else {
                     title_plane.text = mTitlePlane
 
-                    catchWikipedia(mTitlePlane.replace(" ", "%20"))
+                    mDatabase.child(mTitlePlane.toLowerCase().replace(" ", "-"))
+
+                    //catchWikipedia(mTitlePlane.replace(" ", "%20"))
                 }
             }
         }
@@ -181,8 +188,8 @@ class SpecificationActivity : AppCompatActivity() {
 
         firstFlightValue = firstFlightValue.replace(']', ' ')
         firstFlightValue = firstFlightValue.subSequence(
-                0,
-                firstFlightValue.findAnyOf(listOf("[["))!!.first+7)
+                15,
+                firstFlightValue.findAnyOf(listOf("\\n"))!!.first)
                 .toString()
         firstFlightValue = firstFlightValue.replace('[', ' ')
 
@@ -194,6 +201,7 @@ class SpecificationActivity : AppCompatActivity() {
 
     private fun setDescription() {
         val descriptionName = "nEl"
+        val endChar = "{"
         var descriptionValue = mHtmlText.subSequence(
                 mHtmlText.findAnyOf(listOf(descriptionName))!!.first+1,
                 mHtmlText.lastIndex)
@@ -201,8 +209,28 @@ class SpecificationActivity : AppCompatActivity() {
 
         descriptionValue = descriptionValue.subSequence(
                 0,
-                descriptionValue.indexOf('{')
+                descriptionValue.indexOf(endChar) - 1
         ).toString()
+
+        var i = 0
+        var index1 = 0
+        var index2 = 0
+        for (s in descriptionValue) {
+            if (s.equals('[')) index1 = i
+
+            if (s.equals('|')) index2 = i
+
+            if (index2 == i && i > 0) {
+                descriptionValue = descriptionValue.replace(
+                        descriptionValue.subSequence(
+                                index1 - 1,
+                                index2 + 1)
+                                .toString(),
+                        "")
+            }
+            i++
+        }
+
 
         descriptionValue = descriptionValue.replace('[', ' ')
         descriptionValue = descriptionValue.replace(']', ' ')
@@ -222,6 +250,7 @@ class SpecificationActivity : AppCompatActivity() {
 
         spectrumValue = spectrumValue.replace('[', ' ')
         spectrumValue = spectrumValue.replace(']', ' ')
+        spectrumValue = spectrumValue.replace("{{esd}}", " ")
 
         spectrum_txt.text = ": $spectrumValue"
     }
