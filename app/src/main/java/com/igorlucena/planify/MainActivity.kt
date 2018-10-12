@@ -43,7 +43,7 @@ class MainActivity : AppCompatActivity() {
                 cal.get(Calendar.MONTH)
             }
             val restrictions = sharedPreferences.getInt(month.toString(), 0)
-            if (restrictions < 20) {
+            if (restrictions < 32) {
                 if (isNetworkConnected()) {
                     dispatchTakePictureIntent()
                 } else {
@@ -51,7 +51,7 @@ class MainActivity : AppCompatActivity() {
                     startActivity(intentFor<ErrorActivity>("error" to message))
                 }
             } else {
-                longToast("Usted ha utilizado el máximo de 10 solicitudes por mes. Espera el próximo mes para continuar utilizando la aplicación.")
+                longToast("Usted ha utilizado el máximo de 30 solicitudes por mes. Espera el próximo mes para continuar utilizando la aplicación.")
             }
         }
     }
