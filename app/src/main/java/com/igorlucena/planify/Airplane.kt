@@ -1,5 +1,6 @@
 package com.igorlucena.planify
 
-class Airplane(model: String, description: String, maxSpeed: String, spectrum: String,
-               firstFlight: String, length: String, wingspan: String, cruisingSpeed: String,
-               absoluteCeiling: String, automatic: String)
+data class Airplane(val model: String = "", val description: String = "", val maxSpeed: String = "",
+                    val spectrum: String = "", val firstFlight: String = "", val length: String = "",
+                    val wingspan: String = "", val cruisingSpeed: String = "",
+                    val absoluteCeiling: String = "", val automatic: String = "")

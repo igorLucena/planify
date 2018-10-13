@@ -9,16 +9,16 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
         android:layout_gravity="center"
+        android:gravity="top"
+        android:orientation="vertical"
         android:padding="16dp">
 
         <ProgressBar
             android:id="@+id/indeterminateBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            />
+            android:layout_gravity="center" />
 
         <LinearLayout
             android:id="@+id/layout_specification"
@@ -28,14 +28,14 @@
 
             <TextView
                 android:id="@+id/title_plane"
-                android:textSize="22sp"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:textSize="22sp" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
+                android:gravity="center"
                 android:orientation="vertical">
 
                 <ImageView
@@ -48,8 +48,8 @@
                     android:id="@+id/description_txt"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:maxLines="10"
-                    android:ellipsize="end"/>
+                    android:ellipsize="end"
+                    android:maxLines="10" />
             </LinearLayout>
 
             <LinearLayout
@@ -58,16 +58,15 @@
                 android:orientation="horizontal">
 
                 <TextView
+                    style="@style/BoldText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    style="@style/BoldText"
-                    android:text="@string/max_speed"/>
+                    android:text="@string/max_speed" />
 
                 <TextView
                     android:id="@+id/max_speed_txt"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    />
+                    android:layout_height="wrap_content" />
             </LinearLayout>
 
             <LinearLayout
@@ -76,16 +75,15 @@
                 android:orientation="horizontal">
 
                 <TextView
+                    style="@style/BoldText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    style="@style/BoldText"
-                    android:text="@string/spectrum"/>
+                    android:text="@string/spectrum" />
 
                 <TextView
                     android:id="@+id/spectrum_txt"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    />
+                    android:layout_height="wrap_content" />
             </LinearLayout>
 
             <LinearLayout
@@ -94,16 +92,15 @@
                 android:orientation="horizontal">
 
                 <TextView
+                    style="@style/BoldText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    style="@style/BoldText"
-                    android:text="@string/first_flight"/>
+                    android:text="@string/first_flight" />
 
                 <TextView
                     android:id="@+id/first_flight_txt"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    />
+                    android:layout_height="wrap_content" />
             </LinearLayout>
 
             <LinearLayout
@@ -112,16 +109,15 @@
                 android:orientation="horizontal">
 
                 <TextView
+                    style="@style/BoldText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    style="@style/BoldText"
-                    android:text="@string/length"/>
+                    android:text="@string/length" />
 
                 <TextView
                     android:id="@+id/length_txt"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    />
+                    android:layout_height="wrap_content" />
             </LinearLayout>
 
             <LinearLayout
@@ -130,16 +126,15 @@
                 android:orientation="horizontal">
 
                 <TextView
+                    style="@style/BoldText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    style="@style/BoldText"
-                    android:text="@string/wingspan"/>
+                    android:text="@string/wingspan" />
 
                 <TextView
                     android:id="@+id/wingspan_txt"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    />
+                    android:layout_height="wrap_content" />
             </LinearLayout>
 
             <LinearLayout
@@ -148,16 +143,15 @@
                 android:orientation="horizontal">
 
                 <TextView
+                    style="@style/BoldText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    style="@style/BoldText"
-                    android:text="@string/cruising_speed"/>
+                    android:text="@string/cruising_speed" />
 
                 <TextView
                     android:id="@+id/cruising_speed_txt"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    />
+                    android:layout_height="wrap_content" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
