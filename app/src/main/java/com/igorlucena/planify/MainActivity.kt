@@ -19,7 +19,7 @@ class MainActivity : AppCompatActivity() {
     val REQUEST_IMAGE_CAPTURE = 1
     var specificationIntent = Intent()
     val RESTRICTIONS_VISION_API = "restrictions"
-    val MAX_RESTRICTIONS = 40
+    val MAX_RESTRICTIONS = 50
 
 
     @RequiresApi(Build.VERSION_CODES.O)
