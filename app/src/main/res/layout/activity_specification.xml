@@ -9,16 +9,23 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:gravity="top"
+        android:layout_gravity="top"
         android:orientation="vertical"
         android:padding="16dp">
 
-        <ProgressBar
-            android:id="@+id/indeterminateBar"
+        <LinearLayout
+            android:id="@+id/indeterminateBarLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center" />
+            android:layout_gravity="center"
+            android:orientation="vertical">
+
+            <ProgressBar
+                android:id="@+id/indeterminateBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center" />
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/layout_specification"
