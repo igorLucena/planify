@@ -12,6 +12,7 @@ import java.util.*
 class ErrorActivity : AppCompatActivity() {
 
     val RESTRICTIONS_VISION_API = "restrictions"
+    var MAX_RESTRICTIONS = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -19,6 +20,8 @@ class ErrorActivity : AppCompatActivity() {
 
         val extra = intent.extras
         error_txt.text = (extra.get("error")).toString()
+
+        MAX_RESTRICTIONS = extra!!.get("max_restrictions") as Int
 
         val date = Date()
         val month = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -33,7 +36,7 @@ class ErrorActivity : AppCompatActivity() {
         val restrictions = getSharedPreferences(RESTRICTIONS_VISION_API, Context.MODE_PRIVATE)
                 .getInt("$month", 0)
 
-        longToast("Ha utilizado $restrictions de 30 solicitudes en la aplicación.")
+        longToast("Ha utilizado $restrictions de $MAX_RESTRICTIONS solicitudes en la aplicación.")
 
         try_again_button.setOnClickListener {
             finish()
