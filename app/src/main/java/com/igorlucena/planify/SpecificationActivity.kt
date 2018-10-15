@@ -7,10 +7,7 @@ import android.graphics.Bitmap
 import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.annotation.RequiresApi
-import android.text.Html
 import android.view.View
-import android.widget.TextView
 import com.google.api.client.extensions.android.json.AndroidJsonFactory
 import com.google.api.client.http.javanet.NetHttpTransport
 import com.google.api.services.vision.v1.Vision
@@ -22,9 +19,8 @@ import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
-import org.json.JSONObject
-import java.lang.Math.round
-import java.net.URL
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
 import java.time.ZoneId
 import java.util.*
 
@@ -33,10 +29,30 @@ class SpecificationActivity : AppCompatActivity() {
     val API_VISION_KEY = "AIzaSyDK0sjfsIqaOEQyNygIjSgr3aIh9hVlpX4"
     val RESTRICTIONS_VISION_API = "restrictions"
     var mTitlePlane = ""
+    var mModel = ""
+    var mDescription = ""
+    var mMaxSpeed = ""
+    var mSpectrum = ""
+    var mFirstFlight = ""
+    var mLength = ""
+    var mWingspan = ""
+    var mCruisingSpeed = ""
     var mRestrictions = 0
+    var MAX_RESTRICTIONS = 0
     lateinit var mAirplane: Airplane
     lateinit var mSharedPreferences: SharedPreferences
     lateinit var mDatabase: DatabaseReference
+
+    companion object {
+        private val MODEL = "MODEL"
+        private val DESCRIPTION = "DESCRIPTION"
+        private val MAX_SPEED = "MAX_SPEED"
+        private val SPECTRUM = "SPECTRUM"
+        private val FIRST_FLIGHT ="FIRST_FLIGHT"
+        private val LENGTH = "LENGTH"
+        private val WINGSPAN = "WINGSPAN"
+        private val CRUISING_SPEED = "CRUISING_SPEED"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,24 +77,45 @@ class SpecificationActivity : AppCompatActivity() {
         mRestrictions = mSharedPreferences!!.getInt("$month", 0)
 
         indeterminateBar.visibility = View.VISIBLE
-
         layout_specification.visibility = View.GONE
 
         val extra = intent.extras
         image_plane.setImageBitmap(extra!!.get("data") as Bitmap)
 
-        catchVision()
+        MAX_RESTRICTIONS = extra.get("max_restrictions") as Int
+
+        val bitmap = extra.get("data") as Bitmap
+        val bos = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.PNG, 0, bos)
+        val bitmapdata = bos.toByteArray()
+        val bs = ByteArrayInputStream(bitmapdata)
+
+        catchVision(bs)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
+
+        if (outState != null) {
+            outState.putString(MODEL, mModel)
+            outState.putString(DESCRIPTION, mDescription)
+            outState.putString(MAX_SPEED, mMaxSpeed)
+            outState.putString(SPECTRUM, mSpectrum)
+            outState.putString(FIRST_FLIGHT, mFirstFlight)
+            outState.putString(LENGTH, mLength)
+            outState.putString(WINGSPAN, mWingspan)
+            outState.putString(CRUISING_SPEED, mCruisingSpeed)
+        }
     }
 
     @TargetApi(Build.VERSION_CODES.N)
-    private fun catchVision() {
+    private fun catchVision(bs: ByteArrayInputStream) {
         val vision = Vision.Builder(NetHttpTransport(), AndroidJsonFactory(), null)
                 .setVisionRequestInitializer(VisionRequestInitializer(API_VISION_KEY))
                 .build()
 
-        val inputStream = resources.openRawResource(R.raw.photo2)
-        val photoData = org.apache.commons.io.IOUtils.toByteArray(inputStream)
-        inputStream.close()
+        val photoData = org.apache.commons.io.IOUtils.toByteArray(bs)
+        bs.close()
 
         val inputImage = Image()
         inputImage.encodeContent(photoData)
@@ -129,7 +166,7 @@ class SpecificationActivity : AppCompatActivity() {
             uiThread {
                 if (!isAirplane) {
                     val message = resources.getString(R.string.no_exists_airplane)
-                    startActivity(intentFor<ErrorActivity>("error" to message))
+                    startActivity(intentFor<ErrorActivity>("error" to message, "max_restrictions" to MAX_RESTRICTIONS))
                     finish()
                 }
 
@@ -148,34 +185,34 @@ class SpecificationActivity : AppCompatActivity() {
                             }
                         }
 
-                        if (mAirplane.model.length == 0) {
+                        if (isAirplane && mAirplane.model.length == 0) {
                             val message = resources.getString(R.string.no_specification)
-                            startActivity(intentFor<ErrorActivity>("error" to message))
+                            startActivity(intentFor<ErrorActivity>("error" to message, "max_restrictions" to MAX_RESTRICTIONS))
                             finish()
                         } else {
 
-                            val model = mAirplane.model
-                            val description = mAirplane.description
-                            val maxSpeed = mAirplane.maxSpeed
-                            val spectrum = mAirplane.spectrum
-                            val firstFlight = mAirplane.firstFlight
-                            val length = mAirplane.length
-                            val wingspan = mAirplane.wingspan
-                            val cruisingSpeed = mAirplane.cruisingSpeed
+                            mModel = mAirplane.model
+                            mDescription = mAirplane.description
+                            mMaxSpeed = mAirplane.maxSpeed
+                            mSpectrum = mAirplane.spectrum
+                            mFirstFlight = mAirplane.firstFlight
+                            mLength = mAirplane.length
+                            mWingspan = mAirplane.wingspan
+                            mCruisingSpeed = mAirplane.cruisingSpeed
 
-                            title_plane.text = model
-                            description_txt.text = description
-                            max_speed_txt.text = ": $maxSpeed"
-                            spectrum_txt.text = ": $spectrum"
-                            first_flight_txt.text = ": $firstFlight"
-                            length_txt.text = ": $length"
-                            wingspan_txt.text = ": $wingspan"
-                            cruising_speed_txt.text = ": $cruisingSpeed"
+                            title_plane.text = mModel
+                            description_txt.text = mDescription
+                            max_speed_txt.text = ": $mMaxSpeed"
+                            spectrum_txt.text = ": $mSpectrum"
+                            first_flight_txt.text = ": $mFirstFlight"
+                            length_txt.text = ": $mLength"
+                            wingspan_txt.text = ": $mWingspan"
+                            cruising_speed_txt.text = ": $mCruisingSpeed"
 
                             indeterminateBar.visibility = View.GONE
                             layout_specification.visibility = View.VISIBLE
 
-                            toast("Ha utilizado $mRestrictions de 30 solicitudes en la aplicación.")
+                            toast("Ha utilizado $mRestrictions de $MAX_RESTRICTIONS solicitudes en la aplicación.")
                         }
 
                     }

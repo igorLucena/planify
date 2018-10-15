@@ -19,6 +19,7 @@ class MainActivity : AppCompatActivity() {
     val REQUEST_IMAGE_CAPTURE = 1
     var specificationIntent = Intent()
     val RESTRICTIONS_VISION_API = "restrictions"
+    val MAX_RESTRICTIONS = 40
 
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -43,15 +44,15 @@ class MainActivity : AppCompatActivity() {
                 cal.get(Calendar.MONTH)
             }
             val restrictions = sharedPreferences.getInt(month.toString(), 0)
-            if (restrictions < 32) {
+            if (restrictions < MAX_RESTRICTIONS) {
                 if (isNetworkConnected()) {
                     dispatchTakePictureIntent()
                 } else {
                     val message = resources.getString(R.string.no_connection)
-                    startActivity(intentFor<ErrorActivity>("error" to message))
+                    startActivity(intentFor<ErrorActivity>("error" to message, "max_restrictions" to MAX_RESTRICTIONS))
                 }
             } else {
-                longToast("Usted ha utilizado el máximo de 30 solicitudes por mes. Espera el próximo mes para continuar utilizando la aplicación.")
+                longToast("Usted ha utilizado el máximo de $MAX_RESTRICTIONS solicitudes por mes. Espera el próximo mes para continuar utilizando la aplicación.")
             }
         }
     }
@@ -73,6 +74,7 @@ class MainActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
             val extras = data!!.extras
+            extras.putInt("max_restrictions", MAX_RESTRICTIONS)
 
             specificationIntent.putExtras(extras)
             startActivity(specificationIntent)
