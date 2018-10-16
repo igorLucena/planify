@@ -9,7 +9,7 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.support.annotation.RequiresApi
 import android.support.v7.app.AppCompatActivity
-import android.widget.Button
+import android.widget.ImageButton
 import org.jetbrains.anko.*
 import java.time.ZoneId
 import java.util.*
@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val photoButton = findViewById<Button>(R.id.photo_button)
+        val photoButton = findViewById<ImageButton>(R.id.photo_button)
 
         specificationIntent = Intent(this, SpecificationActivity::class.java)
 
