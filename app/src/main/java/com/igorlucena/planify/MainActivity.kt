@@ -17,7 +17,7 @@ import java.util.*
 class MainActivity : AppCompatActivity() {
 
     val REQUEST_IMAGE_CAPTURE = 1
-    var specificationIntent = Intent()
+    var progressBarIntent = Intent()
     val RESTRICTIONS_VISION_API = "restrictions"
     val MAX_RESTRICTIONS = 50
 
@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
 
         val photoButton = findViewById<ImageButton>(R.id.photo_button)
 
-        specificationIntent = Intent(this, SpecificationActivity::class.java)
+        progressBarIntent = Intent(this, ProgressBarActivity::class.java)
 
         val sharedPreferences = getSharedPreferences(RESTRICTIONS_VISION_API, Context.MODE_PRIVATE)
 
@@ -76,8 +76,8 @@ class MainActivity : AppCompatActivity() {
             val extras = data!!.extras
             extras.putInt("max_restrictions", MAX_RESTRICTIONS)
 
-            specificationIntent.putExtras(extras)
-            startActivity(specificationIntent)
+            progressBarIntent.putExtras(extras)
+            startActivity(progressBarIntent)
         }
     }
 
