@@ -15,10 +15,7 @@ import com.google.api.services.vision.v1.VisionRequestInitializer
 import com.google.api.services.vision.v1.model.*
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.activity_specification.*
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.intentFor
-import org.jetbrains.anko.toast
-import org.jetbrains.anko.uiThread
+import org.jetbrains.anko.*
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.time.ZoneId
@@ -34,6 +31,7 @@ class SpecificationActivity : AppCompatActivity() {
     var mFirstFlight = ""
     var mLength = ""
     var mWingspan = ""
+    var mAbsoluteCeiling = ""
     var mCruisingSpeed = ""
     var mRestrictions = 0
     var MAX_RESTRICTIONS = 0
@@ -49,6 +47,7 @@ class SpecificationActivity : AppCompatActivity() {
         private val FIRST_FLIGHT ="FIRST_FLIGHT"
         private val LENGTH = "LENGTH"
         private val WINGSPAN = "WINGSPAN"
+        private val ABSOLUTE_CEILING = "ABSOLUTE_CEILING"
         private val CRUISING_SPEED = "CRUISING_SPEED"
     }
 
@@ -68,6 +67,7 @@ class SpecificationActivity : AppCompatActivity() {
             mFirstFlight = savedInstanceState.getString(FIRST_FLIGHT)
             mLength = savedInstanceState.getString(LENGTH)
             mWingspan = savedInstanceState.getString(WINGSPAN)
+            mAbsoluteCeiling = savedInstanceState.getString(ABSOLUTE_CEILING)
             mCruisingSpeed = savedInstanceState.getString(CRUISING_SPEED)
 
             setTextActivity()
@@ -93,6 +93,8 @@ class SpecificationActivity : AppCompatActivity() {
             mAirplane = extra.getSerializable("airplane") as Airplane
 
             setSpecifications()
+
+            longToast("Ha utilizado $mRestrictions de $MAX_RESTRICTIONS solicitudes en la aplicación.")
         }
     }
 
@@ -107,6 +109,7 @@ class SpecificationActivity : AppCompatActivity() {
             outState.putString(FIRST_FLIGHT, mFirstFlight)
             outState.putString(LENGTH, mLength)
             outState.putString(WINGSPAN, mWingspan)
+            outState.putString(ABSOLUTE_CEILING, mAbsoluteCeiling)
             outState.putString(CRUISING_SPEED, mCruisingSpeed)
         }
     }
@@ -125,6 +128,7 @@ class SpecificationActivity : AppCompatActivity() {
         mFirstFlight = mAirplane.firstFlight
         mLength = mAirplane.length
         mWingspan = mAirplane.wingspan
+        mAbsoluteCeiling = mAirplane.absoluteCeiling
         mCruisingSpeed = mAirplane.cruisingSpeed
 
         setTextActivity()
@@ -138,6 +142,7 @@ class SpecificationActivity : AppCompatActivity() {
         first_flight_txt.text = ": $mFirstFlight"
         length_txt.text = ": $mLength"
         wingspan_txt.text = ": $mWingspan"
+        absolute_ceiling_txt.text = ": $mAbsoluteCeiling"
         cruising_speed_txt.text = ": $mCruisingSpeed"
     }
 }

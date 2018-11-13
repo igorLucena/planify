@@ -19,11 +19,12 @@ class MainActivity : AppCompatActivity() {
     val REQUEST_IMAGE_CAPTURE = 1
     var progressBarIntent = Intent()
     val RESTRICTIONS_VISION_API = "restrictions"
-    val MAX_RESTRICTIONS = 50
+    val MAX_RESTRICTIONS = 75
 
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
+        setTheme(R.style.AppTheme)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 

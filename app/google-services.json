@@ -1,35 +1,27 @@
 {
   "project_info": {
-    "project_number": "989498211669",
-    "firebase_url": "https://model-fastness-214816.firebaseio.com",
-    "project_id": "model-fastness-214816",
-    "storage_bucket": "model-fastness-214816.appspot.com"
+    "project_number": "403596811188",
+    "firebase_url": "https://clean-carrier-221015.firebaseio.com",
+    "project_id": "clean-carrier-221015",
+    "storage_bucket": "clean-carrier-221015.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:989498211669:android:155c9de5b87df922",
+        "mobilesdk_app_id": "1:403596811188:android:155c9de5b87df922",
         "android_client_info": {
           "package_name": "com.igorlucena.planify"
         }
       },
       "oauth_client": [
         {
-          "client_id": "989498211669-4hk2befrla9u720n0ikn9bnvs03tktgf.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.igorlucena.planify",
-            "certificate_hash": "b1a053d3910950b23298cc51e04fa0b7f67e2113"
-          }
-        },
-        {
-          "client_id": "989498211669-hdensomfvcol7tpe6chb8a2tv2f1ijuu.apps.googleusercontent.com",
+          "client_id": "403596811188-tnkdsbsg0ulbf20eom9sefgi7cm13gje.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyA_rOOEvfRa5o6y15IyeLDwxz4aUNJNNp4"
+          "current_key": "AIzaSyBefgBKtN37BhYB_mZINtf9-ZhTpDJ_nEI"
         }
       ],
       "services": {
@@ -37,13 +29,8 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 2,
-          "other_platform_oauth_client": [
-            {
-              "client_id": "989498211669-hdensomfvcol7tpe6chb8a2tv2f1ijuu.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "status": 1,
+          "other_platform_oauth_client": []
         },
         "ads_service": {
           "status": 2

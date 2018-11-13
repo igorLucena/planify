@@ -8,10 +8,16 @@
     android:background="@color/colorBackground"
     tools:context=".ProgressBarActivity">
 
+    <ImageView
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:src="@mipmap/ic_launcher"/>
+
     <ProgressBar
-        android:id="@+id/indeterminateBar"
+        android:id="@+id/determinateBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center" />
+        android:layout_gravity="center"
+        style="?android:attr/progressBarStyleHorizontal"/>
 
 </LinearLayout>

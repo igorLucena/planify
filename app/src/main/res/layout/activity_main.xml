@@ -9,11 +9,18 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <ImageButton
-        android:id="@+id/photo_button"
+    <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:src="@drawable/planifind_main"/>
+
+
+    <ImageButton
+        android:id="@+id/photo_button"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginBottom="100dp"
         android:background="@color/colorBackground"
-        android:src="@android:drawable/ic_menu_camera" />
+        android:src="@mipmap/ic_photo_camera" />
 
 </LinearLayout>

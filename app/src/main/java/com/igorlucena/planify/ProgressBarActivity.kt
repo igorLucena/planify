@@ -14,6 +14,7 @@ import com.google.api.services.vision.v1.model.BatchAnnotateImagesRequest
 import com.google.api.services.vision.v1.model.Feature
 import com.google.api.services.vision.v1.model.Image
 import com.google.firebase.database.*
+import kotlinx.android.synthetic.main.activity_progress_bar.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.uiThread
@@ -24,7 +25,7 @@ import java.util.*
 
 class ProgressBarActivity : AppCompatActivity() {
 
-    val API_VISION_KEY = "AIzaSyDK0sjfsIqaOEQyNygIjSgr3aIh9hVlpX4"
+    val API_VISION_KEY = "AIzaSyBefgBKtN37BhYB_mZINtf9-ZhTpDJ_nEI"
     var MAX_RESTRICTIONS = 0
     lateinit var mBitmap: Bitmap
     var mIsAirplane = false
@@ -54,17 +55,20 @@ class ProgressBarActivity : AppCompatActivity() {
     @TargetApi(Build.VERSION_CODES.N)
     private fun catchVision(bs: ByteArrayInputStream) {
 
+        determinateBar.progress = 0
+
         val vision = Vision.Builder(NetHttpTransport(), AndroidJsonFactory(), null)
                 .setVisionRequestInitializer(VisionRequestInitializer(API_VISION_KEY))
                 .build()
 
-        val inputStream = resources.openRawResource(R.raw.air17)
+        val inputStream = resources.openRawResource(R.raw.air37)
         val photoData = org.apache.commons.io.IOUtils.toByteArray(inputStream)
         inputStream.close()
 
-
         //val photoData = org.apache.commons.io.IOUtils.toByteArray(bs)
         //bs.close()
+
+        determinateBar.progress = 10
 
         val inputImage = Image()
         inputImage.encodeContent(photoData)
@@ -74,6 +78,7 @@ class ProgressBarActivity : AppCompatActivity() {
         val desiredFeature2 = Feature()
         desiredFeature2.setType("WEB_DETECTION")
 
+        determinateBar.progress = 25
 
         val request = AnnotateImageRequest()
         request.setImage(inputImage)
@@ -84,6 +89,8 @@ class ProgressBarActivity : AppCompatActivity() {
 
         doAsync {
             val batchResponse = vision.images().annotate(batchRequest).execute()
+
+            determinateBar.progress = 75
             uiThread {
                 val descriptions = batchResponse.responses.get(0).labelAnnotations
                 val models = batchResponse.responses.get(0).webDetection
@@ -135,6 +142,8 @@ class ProgressBarActivity : AppCompatActivity() {
                 }
 
                 airplaneReference.addValueEventListener(airplaneListener)
+
+                determinateBar.progress = 95
             }
         }
     }
