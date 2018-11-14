@@ -25,7 +25,7 @@ import java.util.*
 
 class ProgressBarActivity : AppCompatActivity() {
 
-    val API_VISION_KEY = "AIzaSyBefgBKtN37BhYB_mZINtf9-ZhTpDJ_nEI"
+    val API_VISION_KEY = "AIzaSyAyVGBe29EyutXgoOpd6d46SA2ojQcGilM"
     var MAX_RESTRICTIONS = 0
     lateinit var mBitmap: Bitmap
     var mIsAirplane = false
