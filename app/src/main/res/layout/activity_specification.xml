@@ -1,43 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorBackground"
+    android:orientation="vertical"
+    android:gravity="center_vertical|center_horizontal"
     tools:context=".SpecificationActivity">
 
-
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="top"
         android:orientation="vertical"
         android:padding="16dp">
-
-        <LinearLayout
-            android:id="@+id/indeterminateBarLayout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:orientation="vertical">
-
-            <ProgressBar
-                android:id="@+id/indeterminateBar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center" />
-        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/layout_specification"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_gravity="top"
             android:orientation="vertical">
 
             <TextView
                 android:id="@+id/title_plane"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="22sp" />
+                android:textStyle="bold"
+                android:textColor="@color/textColor"
+                style="@style/Base.TextAppearance.AppCompat.Large" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -48,15 +38,19 @@
                 <ImageView
                     android:id="@+id/image_plane"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:src="@android:drawable/ic_menu_camera" />
+                    android:layout_height="wrap_content"
+                    android:src="@android:drawable/ic_menu_camera"
+                    android:scaleType="centerCrop"/>
 
                 <TextView
                     android:id="@+id/description_txt"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:textColor="@color/textColor"
                     android:ellipsize="end"
-                    android:maxLines="10" />
+                    android:maxLines="10"
+                    style="@style/TextAppearance.AppCompat.Medium"
+                    android:textAlignment="center" />
             </LinearLayout>
 
             <LinearLayout
@@ -73,7 +67,9 @@
                 <TextView
                     android:id="@+id/max_speed_txt"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/textColor"
+                    style="@style/TextAppearance.AppCompat.Medium"/>
             </LinearLayout>
 
             <LinearLayout
@@ -90,7 +86,9 @@
                 <TextView
                     android:id="@+id/spectrum_txt"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/textColor"
+                    style="@style/TextAppearance.AppCompat.Medium"/>
             </LinearLayout>
 
             <LinearLayout
@@ -107,7 +105,9 @@
                 <TextView
                     android:id="@+id/first_flight_txt"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/textColor"
+                    style="@style/TextAppearance.AppCompat.Medium"/>
             </LinearLayout>
 
             <LinearLayout
@@ -124,7 +124,9 @@
                 <TextView
                     android:id="@+id/length_txt"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/textColor"
+                    style="@style/TextAppearance.AppCompat.Medium"/>
             </LinearLayout>
 
             <LinearLayout
@@ -141,7 +143,28 @@
                 <TextView
                     android:id="@+id/wingspan_txt"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/textColor"
+                    style="@style/TextAppearance.AppCompat.Medium"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/BoldText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/absolute_ceiling" />
+
+                <TextView
+                    android:id="@+id/absolute_ceiling_txt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/textColor"
+                    style="@style/TextAppearance.AppCompat.Medium"/>
             </LinearLayout>
 
             <LinearLayout
@@ -158,8 +181,10 @@
                 <TextView
                     android:id="@+id/cruising_speed_txt"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/textColor"
+                    style="@style/TextAppearance.AppCompat.Medium"/>
             </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
-</ScrollView>
+    </ScrollView>
+</LinearLayout>

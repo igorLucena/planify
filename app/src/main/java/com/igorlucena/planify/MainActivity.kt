@@ -9,7 +9,7 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.support.annotation.RequiresApi
 import android.support.v7.app.AppCompatActivity
-import android.widget.Button
+import android.widget.ImageButton
 import org.jetbrains.anko.*
 import java.time.ZoneId
 import java.util.*
@@ -17,19 +17,20 @@ import java.util.*
 class MainActivity : AppCompatActivity() {
 
     val REQUEST_IMAGE_CAPTURE = 1
-    var specificationIntent = Intent()
+    var progressBarIntent = Intent()
     val RESTRICTIONS_VISION_API = "restrictions"
-    val MAX_RESTRICTIONS = 50
+    val MAX_RESTRICTIONS = 75
 
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
+        setTheme(R.style.AppTheme)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val photoButton = findViewById<Button>(R.id.photo_button)
+        val photoButton = findViewById<ImageButton>(R.id.photo_button)
 
-        specificationIntent = Intent(this, SpecificationActivity::class.java)
+        progressBarIntent = Intent(this, ProgressBarActivity::class.java)
 
         val sharedPreferences = getSharedPreferences(RESTRICTIONS_VISION_API, Context.MODE_PRIVATE)
 
@@ -76,8 +77,8 @@ class MainActivity : AppCompatActivity() {
             val extras = data!!.extras
             extras.putInt("max_restrictions", MAX_RESTRICTIONS)
 
-            specificationIntent.putExtras(extras)
-            startActivity(specificationIntent)
+            progressBarIntent.putExtras(extras)
+            startActivity(progressBarIntent)
         }
     }
 
