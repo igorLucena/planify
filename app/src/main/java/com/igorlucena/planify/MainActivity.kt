@@ -19,7 +19,7 @@ class MainActivity : AppCompatActivity() {
     val REQUEST_IMAGE_CAPTURE = 1
     var progressBarIntent = Intent()
     val RESTRICTIONS_VISION_API = "restrictions"
-    val MAX_RESTRICTIONS = 75
+    val MAX_RESTRICTIONS = 10
 
 
     @RequiresApi(Build.VERSION_CODES.O)
