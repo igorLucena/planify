@@ -97,12 +97,19 @@ class ProgressBarActivity : AppCompatActivity() {
                 val descriptions = batchResponse.responses.get(0).labelAnnotations
                 val models = batchResponse.responses.get(0).webDetection
 
-                mTitlePlane = models.webEntities[0].description
-
-                for (i in (0..(descriptions.size - 1))) {
-                    var description = descriptions.get(i).description
-                    if (description.equals("airplane")) {
-                        mIsAirplane = true
+                for (airPlane in Airplanes.values()) {
+                    for (webEntity in models.webEntities) {
+                        if (webEntity.description != null) {
+                            if (webEntity.description.equals("airplane")) {
+                                mIsAirplane = true
+                            }
+                            if (webEntity.description.contains(airPlane.toString())) {
+                                mTitlePlane = webEntity.description
+                                break
+                            }
+                        }
+                    }
+                    if (mTitlePlane.length > 0) {
                         break
                     }
                 }
@@ -111,41 +118,42 @@ class ProgressBarActivity : AppCompatActivity() {
                     val message = resources.getString(R.string.no_exists_airplane)
                     startActivity(intentFor<ErrorActivity>("error" to message, "max_restrictions" to MAX_RESTRICTIONS))
                     finish()
-                }
+                } else {
 
-                val airplaneReference = mDatabase.child("airplanes")
-                val airplaneListener = object : ValueEventListener {
-                    override fun onDataChange(p0: DataSnapshot) {
-                        val airplanes = p0.children.mapNotNull {
-                            it.getValue(Airplane::class.java)
-                        }
-
-                        for (airplane in airplanes) {
-                            if (mTitlePlane.contains(airplane.model) || airplane.model.contains(mTitlePlane)) {
-                                mAirplane = airplane
-                                break
+                    val airplaneReference = mDatabase.child("airplanes")
+                    val airplaneListener = object : ValueEventListener {
+                        override fun onDataChange(p0: DataSnapshot) {
+                            val airplanes = p0.children.mapNotNull {
+                                it.getValue(Airplane::class.java)
                             }
+
+                            for (airplane in airplanes) {
+                                if (mTitlePlane.contains(airplane.model) || airplane.model.contains(mTitlePlane)) {
+                                    mAirplane = airplane
+                                    break
+                                }
+                            }
+
+                            if (mIsAirplane && mAirplane.model.length == 0) {
+                                val message = resources.getString(R.string.no_specification)
+                                startActivity(intentFor<ErrorActivity>("error" to message, "max_restrictions" to MAX_RESTRICTIONS))
+                                finish()
+                            } else {
+                                startActivity(intentFor<SpecificationActivity>("airplane" to mAirplane as Serializable, "data" to mBitmap, "max_restrictions" to MAX_RESTRICTIONS))
+                                finish()
+                            }
+
                         }
 
-                        if (mIsAirplane && mAirplane.model.length == 0) {
-                            val message = resources.getString(R.string.no_specification)
-                            startActivity(intentFor<ErrorActivity>("error" to message, "max_restrictions" to MAX_RESTRICTIONS))
-                            finish()
-                        } else {
-                            startActivity(intentFor<SpecificationActivity>("airplane" to mAirplane as Serializable, "data" to mBitmap, "max_restrictions" to MAX_RESTRICTIONS))
-                            finish()
+                        override fun onCancelled(p0: DatabaseError) {
+                            println("loadPost:onCancelled ${p0.toException()}")
                         }
-
                     }
 
-                    override fun onCancelled(p0: DatabaseError) {
-                        println("loadPost:onCancelled ${p0.toException()}")
-                    }
+                    airplaneReference.addValueEventListener(airplaneListener)
+
+                    determinateBar.progress = 95
                 }
-
-                airplaneReference.addValueEventListener(airplaneListener)
-
-                determinateBar.progress = 95
             }
         }
     }
