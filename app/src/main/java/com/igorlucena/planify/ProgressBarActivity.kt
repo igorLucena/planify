@@ -97,20 +97,26 @@ class ProgressBarActivity : AppCompatActivity() {
                 val descriptions = batchResponse.responses.get(0).labelAnnotations
                 val models = batchResponse.responses.get(0).webDetection
 
-                for (airPlane in Airplanes.values()) {
+                for (description in descriptions) {
+                    if (description.description.equals("airplane")) {
+                        mIsAirplane = true
+                        break
+                    }
+                }
+
+                if (mIsAirplane) {
                     for (webEntity in models.webEntities) {
-                        if (webEntity.description != null) {
-                            if (webEntity.description.equals("airplane")) {
-                                mIsAirplane = true
-                            }
-                            if (webEntity.description.contains(airPlane.toString())) {
-                                mTitlePlane = webEntity.description
-                                break
+                        for (airPlane in Airplanes.values()) {
+                            if (webEntity.description != null) {
+                                if (webEntity.description.contains(airPlane.toString())) {
+                                    mTitlePlane = webEntity.description
+                                    break
+                                }
                             }
                         }
-                    }
-                    if (mTitlePlane.length > 0) {
-                        break
+                        if (mTitlePlane.length > 0) {
+                            break
+                        }
                     }
                 }
 
@@ -128,7 +134,7 @@ class ProgressBarActivity : AppCompatActivity() {
                             }
 
                             for (airplane in airplanes) {
-                                if (mTitlePlane.contains(airplane.model) || airplane.model.contains(mTitlePlane)) {
+                                if (mTitlePlane.contains(airplane.model) || airplane.model.contains((mTitlePlane))) {
                                     mAirplane = airplane
                                     break
                                 }
