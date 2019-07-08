@@ -62,13 +62,13 @@ class ProgressBarActivity : AppCompatActivity() {
                 .build()
 
         // Code to take images from within the app
-        //val inputStream = resources.openRawResource(R.raw.air37)
-        //val photoData = org.apache.commons.io.IOUtils.toByteArray(inputStream)
-        //inputStream.close()
+        val inputStream = resources.openRawResource(R.raw.air1)
+        val photoData = org.apache.commons.io.IOUtils.toByteArray(inputStream)
+        inputStream.close()
 
         // Code to take picture and let it to Google Vision
-        val photoData = org.apache.commons.io.IOUtils.toByteArray(bs)
-        bs.close()
+        //val photoData = org.apache.commons.io.IOUtils.toByteArray(bs)
+        //bs.close()
 
         determinateBar.progress = 10
 

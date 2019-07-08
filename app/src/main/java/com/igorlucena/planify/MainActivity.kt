@@ -6,6 +6,7 @@ import android.content.Intent
 import android.net.ConnectivityManager
 import android.os.Build
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.provider.MediaStore
 import android.support.annotation.RequiresApi
 import android.support.v7.app.AppCompatActivity
@@ -32,7 +33,10 @@ class MainActivity : AppCompatActivity() {
 
         progressBarIntent = Intent(this, ProgressBarActivity::class.java)
 
-        val sharedPreferences = getSharedPreferences(RESTRICTIONS_VISION_API, Context.MODE_PRIVATE)
+        val sharedPreferences = this.getSharedPreferences(RESTRICTIONS_VISION_API, Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putInt("month", 1)
+        editor.commit()
 
         photoButton.setOnClickListener {
             val date = Date()
